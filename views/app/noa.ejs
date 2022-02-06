@@ -1,0 +1,181 @@
+<div class="main" >
+    <div class="form-group" >
+        <div class="wrapper">
+            <input list="list" type="text" class="form-control" value="@" id="tagText" >
+            <textarea class="form-control" id="Typedtext" maxlength="999999" style="resize: none;"></textarea>
+        </div>
+        <datalist id="list" ></datalist>
+     </div>
+ </div>
+ <script>
+(function(){
+    const get_cookie = function(cname) {
+        let name = cname + "=";
+        let decodedCookie = decodeURIComponent(document.cookie);
+        let ca = decodedCookie.split(';');
+        for(let i = 0; i <ca.length; i++) {
+            let c = ca[i];
+            while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+            }
+            if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+            }
+        }
+        return "";
+    }
+    const set_cookie = function(cname, cvalue, exdays) {
+        const d = new Date();
+        d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+        let expires = "expires="+d.toUTCString();
+        document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+    }
+    const Noa = {
+        hostname: '/api/v1/noa/',
+        $input: document.querySelector(".wrapper input"),
+        $textarea: document.querySelector(".wrapper textarea"),
+        $datalist: document.querySelector(".main datalist#list"),
+        time_out: 0,
+        update_time: 500,
+        time_obj_title: null,
+        time_obj_desc: null,
+
+        init: function(){
+            input = Noa.$input;
+            textarea = Noa.$textarea;
+            value = input.value;
+            textarea.disabled=true;
+            if( value.length > 0 ){
+                $.ajax({
+                    "url": `${Noa.hostname}read/${value}`,
+                    "method": "GET",
+                    "headers": {
+                        "Content-Type": "application/json",
+                        "Auth-key": get_cookie('auth-key')
+                    },
+                    "timeout": Noa.time_out,
+                    complete: function(xhr, textStatus) {
+                        if(xhr.status == 500){
+                            location.href='/';
+                        }
+                    }
+                }).done(function (response) {
+                    input.value = response['data']['title']
+                    textarea.value = response['data']['desc'];
+                    textarea.disabled=false;
+
+                    // Display all title
+                    Noa.$datalist.innerHTML='';
+                    response['titles'].forEach(element => {
+                        var tag = document.createElement("option");
+                        tag.value=element;
+                        Noa.$datalist.appendChild(tag);
+                    });
+                });
+            }
+
+            input.onkeyup = function (evt) { Noa.onsave_title(); }
+            textarea.onkeyup = function (evt) { Noa.onsave_desc(); }
+        },
+        onsave_title: function(){
+            input = Noa.$input;
+            textarea = Noa.$textarea;
+            textarea.disabled=true;
+            clearTimeout(Noa.time_obj_title);
+            Noa.time_obj_title = setTimeout(() => {
+                var value = input.value;
+                if( value.length > 0 ){
+                    $.ajax({
+                        "url": `${Noa.hostname}write`,
+                        "method": "POST",
+                        "timeout": Noa.time_out,
+                        "headers": {
+                            "Content-Type": "application/json",
+                            "Auth-key": get_cookie('auth-key')
+                        },
+                        "data": JSON.stringify({
+                            mode: 'title',
+                            data: {
+                                "title" : value ,
+                                "desc" : textarea.value
+                            }
+                        }),
+                        complete: function(xhr, textStatus) {
+                            if(xhr.status == 500){
+                                location.href='/';
+                            }
+                        }
+                    }).done(function (response) {
+                        input.value = response['data']['title']
+                        textarea.value = response['data']['desc'];
+                        textarea.disabled=false;
+                    });
+                }
+            }, Noa.update_time);
+        },
+        onsave_desc: function(){
+            input = Noa.$input;
+            textarea = Noa.$textarea;
+            input.disabled=true;
+            clearTimeout(Noa.time_obj_desc);
+            Noa.time_obj_desc = callback = setTimeout(() => {
+                var value = input.value;
+                if( value.length > 0 ){
+                    if( textarea.value == '' ){
+                        textarea.value = null;
+                    }
+                    $.ajax({
+                        "url": `${Noa.hostname}write`,
+                        "method": "POST",
+                        "timeout": Noa.time_out,
+                        "headers": {
+                            "Content-Type": "application/json",
+                            "Auth-key": get_cookie('auth-key')
+                        },
+                        "data": JSON.stringify({
+                            mode: 'desc',
+                            data: {
+                                "title" : value ,
+                                "desc" : textarea.value
+                            }
+                        }),
+                        complete: function(xhr, textStatus) {
+                            if(xhr.status == 500){
+                                location.href='/';
+                            }
+                        }
+                    }).done(function (response) {
+                        textarea.value = response['data']['desc'];
+                        input.disabled=false;
+                        console.log( response['titles'] );
+
+                        // Display all title
+                        Noa.$datalist.innerHTML='';
+                        response['titles'].forEach(element => {
+                            var tag = document.createElement("option");
+                            tag.value=element;
+                            Noa.$datalist.appendChild(tag);
+                        });
+                    });
+                }
+            }, Noa.update_time);
+        }
+    };
+
+    Noa.init();
+})();
+</script>
+<style>
+.main{
+    width: 100%;
+    height: 100vh;
+    padding: 5px;
+    background-color: #f2f2f2;
+}
+.main input{
+    margin-bottom: 5px;
+}
+.main textarea{
+    height: calc(100vh - 50px);
+}
+</style>
