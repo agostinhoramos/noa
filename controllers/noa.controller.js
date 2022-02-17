@@ -160,7 +160,8 @@ exports.auth = async (req, res) => {
                     ip_address: ip_address(req),
                     status: 1
                 }).save(function (err) {
-                    res.cookie('auth-key', __auth_key, {expire: 360000 + Date.now()});
+                    res.cookie('auth-key', __auth_key, { maxAge: (((60 * 1000)*60) * process.env.MAX_SESSION_TIME) });
+
                     res.status(200).json({
                         auth : { status: 'OK' }
                     });
