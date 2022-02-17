@@ -2,7 +2,7 @@
 sudo npm install pm2@latest -g
 
 # Set RUN path
-pm2 start app.js --env development --restart-delay 10 --name NOA
+pm2 start app.js --name NOA
 
 # Get permission to restart
 sudo env PATH=$PATH:/usr/bin pm2 startup ubuntu -u webmaster --hp /home/webmaster
