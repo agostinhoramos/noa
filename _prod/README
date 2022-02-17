@@ -1,13 +1,17 @@
+# Install PM2
 sudo npm install pm2@latest -g
-pm2 startup systemd
-sudo env PATH=$PATH:/usr/bin /usr/local/lib/node_modules/pm2/bin/pm2 startup systemd -u webmaster --hp /home/webmaster
-pm2 save
-sudo systemctl start pm2-webmaster
-systemctl status pm2-webmaster
-pm2 stop 
-pm2 restart 
-pm2 info
-pm2 monit
 
-sudo systemctl stop pm2-webmaster
-sudo systemctl start pm2-webmaster
+# Set RUN path
+pm2 start app.js --env development --restart-delay 10 --name NOA
+
+# Get permission to restart
+sudo env PATH=$PATH:/usr/bin pm2 startup ubuntu -u webmaster --hp /home/webmaster
+
+pm2 restart NOA
+pm2 reload NOA
+pm2 stop NOA
+pm2 delete NOA
+
+## Read more about in 
+## https://pm2.keymetrics.io/docs/usage/pm2-doc-single-page/
+## https://pm2.keymetrics.io/docs/usage/startup/
