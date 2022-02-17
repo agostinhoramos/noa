@@ -12,6 +12,7 @@ const noa_controller = require("../controllers/noa.controller")
 router.get("/read/:_text", cors(options), noa_controller.read)
 router.post("/write", cors(options), noa_controller.write)
 
+router.post("/create", cors(options), noa_controller.create)
 router.get("/request_auth", cors(options), noa_controller.request_auth)
 router.post("/auth", cors(options), noa_controller.auth)
 

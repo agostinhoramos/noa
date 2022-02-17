@@ -6,176 +6,39 @@
         </div>
         <datalist id="list" ></datalist>
      </div>
+     <link rel="stylesheet" type="text/css" href="/static/style.css" >
+
+    <div class="login-wraper">
+        <div class="mt-8 max-w-xl mx-auto flex flex-wrap justify-center items-start font-sans antialiased">
+            <section class="mb-8 lg:ml-8 bg-white p-6 rounded shadow-md" style="width: 25rem;">
+                <div class="mb-3 leading-normal">
+                    <div class="desc text-center">
+                        <p class="mb-2 text-base">Enter <span char></span>th, <span char></span>th, <span char></span>th, and <span char></span>th positions of your <span class="font-bold">multichannel code<span>.</p>
+                    </div>
+                    <div class="m-0 my-8 w-100 text-center">
+                        <div class="block-text mb-1">
+                            <input class="m-0 p-2 border border-grey-light rounded text-sm font-semibold text-grey-dark trans-all-linear text-center" name="password" maxlength="1" type="text" style="resize:horizontal; width:35px" value="0" disabled>
+                            <input class="m-0 p-2 border border-grey-light rounded text-sm font-semibold text-grey-dark trans-all-linear text-center" name="password" maxlength="1" type="text" style="resize:horizontal; width:35px" value="1" disabled>
+                            <input class="m-0 p-2 border border-grey-light rounded text-sm font-semibold text-grey-dark trans-all-linear text-center" name="password" maxlength="1" type="text" style="resize:horizontal; width:35px" value="2" disabled>
+                            <input class="m-0 p-2 border border-grey-light rounded text-sm font-semibold text-grey-dark trans-all-linear text-center" name="password" maxlength="1" type="text" style="resize:horizontal; width:35px" value="3" disabled>
+                        </div>
+    
+                        <div class="block-pass">
+                            <input class="m-0 p-2 border border-grey-light rounded text-sm font-semibold text-grey-dark border-green focus:border-blue trans-all-linear text-center" name="password" maxlength="1" onfocus="value=''" type="password" style="resize:horizontal; width:35px" >
+                            <input class="m-0 p-2 border border-grey-light rounded text-sm font-semibold text-grey-dark border-green focus:border-blue trans-all-linear text-center" name="password" maxlength="1" onfocus="value=''" type="password" style="resize:horizontal; width:35px" >
+                            <input class="m-0 p-2 border border-grey-light rounded text-sm font-semibold text-grey-dark border-green focus:border-blue trans-all-linear text-center" name="password" maxlength="1" onfocus="value=''" type="password" style="resize:horizontal; width:35px" >
+                            <input class="m-0 p-2 border border-grey-light rounded text-sm font-semibold text-grey-dark border-green focus:border-blue trans-all-linear text-center" name="password" maxlength="1" onfocus="value=''" type="password" style="resize:horizontal; width:35px" >
+                        </div>
+                    </div>
+    
+                </div>
+                <div class="m-0 w-100 text-center">
+                    <button class="noa_app m-0 p-3 text-sm font-semibold border-2 border-grey-light rounded hover:bg-grey-light focus:bg-grey-light focus:border-blue trans-all-linear" type="button">Cancel</button>
+                </div>
+    
+            </section>
+        </div>
+    </div>
+
  </div>
- <script>
-(function(){
-    const get_cookie = function(cname) {
-        let name = cname + "=";
-        let decodedCookie = decodeURIComponent(document.cookie);
-        let ca = decodedCookie.split(';');
-        for(let i = 0; i <ca.length; i++) {
-            let c = ca[i];
-            while (c.charAt(0) == ' ') {
-            c = c.substring(1);
-            }
-            if (c.indexOf(name) == 0) {
-            return c.substring(name.length, c.length);
-            }
-        }
-        return "";
-    }
-    const set_cookie = function(cname, cvalue, exdays) {
-        const d = new Date();
-        d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
-        let expires = "expires="+d.toUTCString();
-        document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
-    }
-    const Noa = {
-        hostname: '/api/v1/noa/',
-        $input: document.querySelector(".wrapper input"),
-        $textarea: document.querySelector(".wrapper textarea"),
-        $datalist: document.querySelector(".main datalist#list"),
-        time_out: 0,
-        update_time: 500,
-        time_obj_title: null,
-        time_obj_desc: null,
-
-        init: function(){
-            input = Noa.$input;
-            textarea = Noa.$textarea;
-            value = input.value;
-            textarea.disabled=true;
-            if( value.length > 0 ){
-                $.ajax({
-                    "url": `${Noa.hostname}read/${value}`,
-                    "method": "GET",
-                    "headers": {
-                        "Content-Type": "application/json",
-                        "Auth-key": get_cookie('auth-key')
-                    },
-                    "timeout": Noa.time_out,
-                    complete: function(xhr, textStatus) {
-                        if(xhr.status == 500){
-                            location.href='/';
-                        }
-                    }
-                }).done(function (response) {
-                    input.value = response['data']['title']
-                    textarea.value = response['data']['desc'];
-                    textarea.disabled=false;
-
-                    // Display all title
-                    Noa.$datalist.innerHTML='';
-                    response['titles'].forEach(element => {
-                        var tag = document.createElement("option");
-                        tag.value=element;
-                        Noa.$datalist.appendChild(tag);
-                    });
-                });
-            }
-
-            input.onkeyup = function (evt) { Noa.onsave_title(); }
-            textarea.onkeyup = function (evt) { Noa.onsave_desc(); }
-        },
-        onsave_title: function(){
-            input = Noa.$input;
-            textarea = Noa.$textarea;
-            textarea.disabled=true;
-            clearTimeout(Noa.time_obj_title);
-            Noa.time_obj_title = setTimeout(() => {
-                var value = input.value;
-                if( value.length > 0 ){
-                    $.ajax({
-                        "url": `${Noa.hostname}write`,
-                        "method": "POST",
-                        "timeout": Noa.time_out,
-                        "headers": {
-                            "Content-Type": "application/json",
-                            "Auth-key": get_cookie('auth-key')
-                        },
-                        "data": JSON.stringify({
-                            mode: 'title',
-                            data: {
-                                "title" : value ,
-                                "desc" : textarea.value
-                            }
-                        }),
-                        complete: function(xhr, textStatus) {
-                            if(xhr.status == 500){
-                                location.href='/';
-                            }
-                        }
-                    }).done(function (response) {
-                        input.value = response['data']['title']
-                        textarea.value = response['data']['desc'];
-                        textarea.disabled=false;
-                    });
-                }
-            }, Noa.update_time);
-        },
-        onsave_desc: function(){
-            input = Noa.$input;
-            textarea = Noa.$textarea;
-            input.disabled=true;
-            clearTimeout(Noa.time_obj_desc);
-            Noa.time_obj_desc = callback = setTimeout(() => {
-                var value = input.value;
-                if( value.length > 0 ){
-                    if( textarea.value == '' ){
-                        textarea.value = null;
-                    }
-                    $.ajax({
-                        "url": `${Noa.hostname}write`,
-                        "method": "POST",
-                        "timeout": Noa.time_out,
-                        "headers": {
-                            "Content-Type": "application/json",
-                            "Auth-key": get_cookie('auth-key')
-                        },
-                        "data": JSON.stringify({
-                            mode: 'desc',
-                            data: {
-                                "title" : value ,
-                                "desc" : textarea.value
-                            }
-                        }),
-                        complete: function(xhr, textStatus) {
-                            if(xhr.status == 500){
-                                location.href='/';
-                            }
-                        }
-                    }).done(function (response) {
-                        textarea.value = response['data']['desc'];
-                        input.disabled=false;
-                        console.log( response['titles'] );
-
-                        // Display all title
-                        Noa.$datalist.innerHTML='';
-                        response['titles'].forEach(element => {
-                            var tag = document.createElement("option");
-                            tag.value=element;
-                            Noa.$datalist.appendChild(tag);
-                        });
-                    });
-                }
-            }, Noa.update_time);
-        }
-    };
-
-    Noa.init();
-})();
-</script>
-<style>
-.main{
-    width: 100%;
-    height: 100vh;
-    padding: 5px;
-    background-color: #f2f2f2;
-}
-.main input{
-    margin-bottom: 5px;
-}
-.main textarea{
-    height: calc(100vh - 50px);
-}
-</style>
+ <script src="/static/main.js"></script>

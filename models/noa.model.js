@@ -9,6 +9,9 @@ let Noa = new Schema({
     },
     desc: {
         type: String
+    },
+    author: {
+        type: mongoose.Schema.Types.ObjectId
     }
 }, { timestamps: true });
 

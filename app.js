@@ -8,7 +8,6 @@ var fs = require('fs');
 var https = require('https');
 const http = require('http');
 
-
 // .Env
 const dotenv = require('dotenv');
 dotenv.config();
@@ -34,15 +33,6 @@ app.use('/img', express.static(__dirname + 'public/img'))
 app.use(expressLayouts);
 app.set('layout', './layout/main')
 app.set('view engine', 'ejs')
-
-// HTTP
-app.get('', (req, res) => {
-    res.render('welcome')
-})
-
-app.get('/@/noa', (req, res) => {
-    res.render('app/noa')
-})
 
 var httpsServer = https.createServer(credentials, app);
 
@@ -77,4 +67,17 @@ let mongoDB = process.env.MONGOOSE_URI
 
 mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true })
     .then((result) => connect_server())
-    .catch((err) => console.log(err))
+    .catch((err) => console.log(err));
+
+// HTTP
+const Access = require('./models/access.model');
+
+app.get(['', '/pwa/', '/@/noa'], (req, res) => {
+    Access.find({ enabled: 1 }, async (err, data) => {
+        if( data.length == 0 ){
+            res.render('login');
+        } else {
+            res.render('app/noa');
+        }
+    });
+})

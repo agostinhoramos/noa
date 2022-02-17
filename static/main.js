@@ -1,0 +1,32 @@
+/*
+ * ATTENTION: The "eval" devtool has been used (maybe by default in mode: "development").
+ * This devtool is neither made for production nor for readable output files.
+ * It uses "eval()" calls to create a separate source file in the browser devtools.
+ * If you are trying to read the output file, select a different devtool (https://webpack.js.org/configuration/devtool/)
+ * or disable the default devtool with "devtool: false".
+ * If you are looking for production-ready output files, see mode: "production" (https://webpack.js.org/configuration/mode/).
+ */
+/******/ (() => { // webpackBootstrap
+/******/ 	var __webpack_modules__ = ({
+
+/***/ "./public/js/index.js":
+/*!****************************!*\
+  !*** ./public/js/index.js ***!
+  \****************************/
+/***/ (() => {
+
+eval("(function () {\n  var get_cookie = function get_cookie(cname) {\n    var name = cname + \"=\";\n    var decodedCookie = decodeURIComponent(document.cookie);\n    var ca = decodedCookie.split(';');\n\n    for (var i = 0; i < ca.length; i++) {\n      var c = ca[i];\n\n      while (c.charAt(0) == ' ') {\n        c = c.substring(1);\n      }\n\n      if (c.indexOf(name) == 0) {\n        return c.substring(name.length, c.length);\n      }\n    }\n\n    return \"\";\n  };\n\n  var set_cookie = function set_cookie(cname, cvalue, exdays) {\n    var d = new Date();\n    d.setTime(d.getTime() + exdays * 24 * 60 * 60 * 1000);\n    var expires = \"expires=\" + d.toUTCString();\n    document.cookie = cname + \"=\" + cvalue + \";\" + expires + \";path=/\";\n  };\n\n  var Noa = {\n    hostname: '/api/v1/noa/',\n    $input: document.querySelector(\".wrapper input\"),\n    $textarea: document.querySelector(\".wrapper textarea\"),\n    $datalist: document.querySelector(\".main datalist#list\"),\n    time_out: 0,\n    update_time: 500,\n    time_obj_title: null,\n    time_obj_desc: null,\n    init: function init() {\n      input = Noa.$input;\n      textarea = Noa.$textarea;\n      value = input.value;\n      textarea.disabled = true;\n\n      if (value.length > 0) {\n        $.ajax({\n          \"url\": \"\".concat(Noa.hostname, \"read/\").concat(value),\n          \"method\": \"GET\",\n          \"headers\": {\n            \"Content-Type\": \"application/json\",\n            \"Auth-key\": get_cookie('auth-key')\n          },\n          \"timeout\": Noa.time_out,\n          complete: function complete(xhr, textStatus) {\n            if (xhr.status == 500) {\n              location.href = '/';\n            }\n          }\n        }).done(function (response) {\n          input.value = response['data']['title'];\n          textarea.value = response['data']['desc'];\n          textarea.disabled = false; // Display all title\n\n          Noa.$datalist.innerHTML = '';\n          response['titles'].forEach(function (element) {\n            var tag = document.createElement(\"option\");\n            tag.value = element;\n            Noa.$datalist.appendChild(tag);\n          });\n        });\n      }\n\n      input.onkeyup = function (evt) {\n        Noa.onsave_title();\n      };\n\n      textarea.onkeyup = function (evt) {\n        Noa.onsave_desc();\n      };\n    },\n    onsave_title: function onsave_title() {\n      input = Noa.$input;\n      textarea = Noa.$textarea;\n      textarea.disabled = true;\n      clearTimeout(Noa.time_obj_title);\n      Noa.time_obj_title = setTimeout(function () {\n        var value = input.value;\n\n        if (value.length > 0) {\n          $.ajax({\n            \"url\": \"\".concat(Noa.hostname, \"write\"),\n            \"method\": \"POST\",\n            \"timeout\": Noa.time_out,\n            \"headers\": {\n              \"Content-Type\": \"application/json\",\n              \"Auth-key\": get_cookie('auth-key')\n            },\n            \"data\": JSON.stringify({\n              mode: 'title',\n              data: {\n                \"title\": value,\n                \"desc\": textarea.value\n              }\n            }),\n            complete: function complete(xhr, textStatus) {\n              if (xhr.status == 500) {\n                location.href = '/';\n              }\n            }\n          }).done(function (response) {\n            input.value = response['data']['title'];\n            textarea.value = response['data']['desc'];\n            textarea.disabled = false;\n          });\n        }\n      }, Noa.update_time);\n    },\n    onsave_desc: function onsave_desc() {\n      input = Noa.$input;\n      textarea = Noa.$textarea;\n      input.disabled = true;\n      clearTimeout(Noa.time_obj_desc);\n      Noa.time_obj_desc = callback = setTimeout(function () {\n        var value = input.value;\n\n        if (value.length > 0) {\n          if (textarea.value == '') {\n            textarea.value = null;\n          }\n\n          $.ajax({\n            \"url\": \"\".concat(Noa.hostname, \"write\"),\n            \"method\": \"POST\",\n            \"timeout\": Noa.time_out,\n            \"headers\": {\n              \"Content-Type\": \"application/json\",\n              \"Auth-key\": get_cookie('auth-key')\n            },\n            \"data\": JSON.stringify({\n              mode: 'desc',\n              data: {\n                \"title\": value,\n                \"desc\": textarea.value\n              }\n            }),\n            complete: function complete(xhr, textStatus) {\n              if (xhr.status == 500) {\n                location.href = '/';\n              }\n            }\n          }).done(function (response) {\n            textarea.value = response['data']['desc'];\n            input.disabled = false;\n            console.log(response['titles']); // Display all title\n\n            Noa.$datalist.innerHTML = '';\n            response['titles'].forEach(function (element) {\n              var tag = document.createElement(\"option\");\n              tag.value = element;\n              Noa.$datalist.appendChild(tag);\n            });\n          });\n        }\n      }, Noa.update_time);\n    }\n  };\n  Noa.init();\n})();\n\n//# sourceURL=webpack://noa_app/./public/js/index.js?");
+
+/***/ })
+
+/******/ 	});
+/************************************************************************/
+/******/ 	
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	// This entry module can't be inlined because the eval devtool is used.
+/******/ 	var __webpack_exports__ = {};
+/******/ 	__webpack_modules__["./public/js/index.js"]();
+/******/ 	
+/******/ })()
+;

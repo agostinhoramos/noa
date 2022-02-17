@@ -3,7 +3,11 @@ self.addEventListener("install", e => {
         caches.open("statics").then(cache => {
             return cache.addAll([
                 "/", "/@/noa", 
-                "/img/noa.png"
+                "/img/noa.png",
+                "/static/main.js",
+                "/vendor/tailwindcss/index.css",
+                "/vendor/jquery/jquery.js",
+                "/static/style.css"
             ]);
         })
     );
