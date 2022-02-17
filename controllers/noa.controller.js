@@ -1,5 +1,6 @@
 const { result } = require('lodash');
 var crypto = require('crypto');
+const mongoose = require('mongoose');
 
 const db = require('../dbHelper');
 const Noa = require('../models/noa.model');
@@ -57,6 +58,8 @@ const u_access = (req, res, call) => {
         __auth_key = crypto.createHash('sha256')
                     .update(n_auth).digest('base64');
 
+        collection = db.collection("noas");
+
         Auth.find({ ip_address : ip_address(req), status: 0 }, function(err, auth) {
             __auth = auth;
             call();
@@ -99,8 +102,6 @@ exports.request_auth = async (req, res) => {
         result = {};
         result.auth = {};
 
-        console.log("rwtertre");
-
         if( __auth.length > 2 ){
             return res.status(200).json({
                 auth: {
@@ -136,7 +137,7 @@ exports.request_auth = async (req, res) => {
 
 exports.auth = async (req, res) => {
     u_access(req, res, async () => {
-        //console.log(req.body);
+
         let isCorrect = true;
 
         if( __auth.length < 3 ){
@@ -152,8 +153,6 @@ exports.auth = async (req, res) => {
                     isCorrect = false;
                 }
             });
-
-            console.log(isCorrect);
 
             if( isCorrect ){
                 new Auth({
@@ -192,8 +191,7 @@ exports.read = async (req, res) => {
             if( __auth_key == req.cookies['auth-key'] ){
                 title_list = [];
                 try {
-                    collection = db.collection("noas");
-                    var all = await collection.find({ author: __id }).toArray();
+                var all = await collection.find({ author: mongoose.Types.ObjectId(__id), title: { '$regex': req.params._text } }).toArray();
                     all.forEach(element => {
                         title_list.push(element.title);
                     });
@@ -201,7 +199,7 @@ exports.read = async (req, res) => {
                     console.log(err);
                 }
         
-                Noa.findOne({ title : req.params._text, author: __id }, function(err, data) {
+                Noa.findOne({ title : req.params._text, author: mongoose.Types.ObjectId(__id) }, function(err, data) {
                     if( data == null ){
                         // RETURN
                         res.json({
@@ -233,8 +231,7 @@ exports.write = async (req, res) => {
             if( __auth_key == req.cookies['auth-key'] ){
                 title_list = [];
                 try {
-                    collection = db.collection("noas");
-                    var all = await collection.find({author: __id }).toArray();
+                    var all = await collection.find({author: mongoose.Types.ObjectId(__id), title: { '$regex': req.body.data.title } }).toArray();
                     all.forEach(element => {
                         title_list.push(element.title);
                     });
@@ -243,7 +240,7 @@ exports.write = async (req, res) => {
                 }
 
                 if( req.body.mode == 'title' ){ // ON TYPE TITLE
-                    Noa.findOne({ title : req.body.data.title, author: __id }, function(err, data) {
+                    Noa.findOne({ title : req.body.data.title, author: mongoose.Types.ObjectId(__id) }, function(err, data) {
 
                         if( data != null ){ // title exist
 
@@ -277,13 +274,14 @@ exports.write = async (req, res) => {
                     });
                 }
                 if( req.body.mode == 'desc' ){ // ON TYPE DESC
-                    Noa.findOne({ title : req.body.data.title, author: __id }, function(err, data) {
+                    Noa.findOne({ title : req.body.data.title, author: mongoose.Types.ObjectId(__id) }, function(err, data) {
 
                         if(
                             data != null // title exist
                         ){
                             // DO OPERATION
                             data.desc = req.body.data.desc;
+                            data.author = __id;
 
                             // CONVERT
                             req.body.data.title = req.body.data.title || '';
