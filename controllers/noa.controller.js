@@ -165,6 +165,16 @@ exports.auth = async (req, res) => {
                         auth : { status: 'OK' }
                     });
                 });
+                Auth.find({ fingerprint: identify_client(req) }, function (err, data) {
+                    if( !data ){
+                        res.send({"Error" : "Data not found"});
+                        return false;
+                    }
+                    data.forEach(function(item){
+                        item.status = 1;
+                        item.save(function (err) {});
+                    });
+                });
             }
 
             if( !isCorrect ){
@@ -229,6 +239,7 @@ exports.write = async (req, res) => {
     u_access(req, res, async () => {
         if( __auth.length < process.env.MAX_NUMBER_OF_ATTEMPTS ){
             if( __auth_key == req.cookies['auth-key'] ){
+                
                 title_list = [];
                 try {
                     var all = await collection.find({author: mongoose.Types.ObjectId(__id), title: { '$regex': req.body.data.title } }).toArray();
@@ -252,6 +263,7 @@ exports.write = async (req, res) => {
 
                             // RETURN
                             res.json({
+                                titles: title_list,
                                 data: {
                                     title: req.body.data.title,
                                     desc: req.body.data.desc
@@ -265,6 +277,7 @@ exports.write = async (req, res) => {
 
                             // RETURN
                             res.json({
+                                titles: title_list,
                                 data: {
                                     title: req.body.data.title,
                                     desc: ''

@@ -10,7 +10,7 @@ document.onkeydown = function (evt) {
     if (evt.shiftKey && evt.keyCode === 78) {
         on_open_windows();
     }
-    if(evt.keyCode === 27) {
+    if(evt.keyCode === 27) { // ESC
         on_close_windows();
     }
     if( evt.keyCode === 8 ){ // delete
@@ -18,6 +18,12 @@ document.onkeydown = function (evt) {
         if( pos >= 0 ){
             inputs[pos].focus()
         }
+    }
+    if( evt.keyCode === 37 ){ // LEFT
+        console.log( evt.keyCode );
+    }
+    if( evt.keyCode === 39 ){ // RIGHT
+        console.log( evt.keyCode );   
     }
 }
 inputs.forEach(function(elem, index){
@@ -83,7 +89,6 @@ let on_open_windows = function(){
 
         if( response['auth']['status'] == 'NOK' ){
             on_close_windows();
-            //return;
         }
 
         arr_pos = response['pos'];
@@ -176,7 +181,6 @@ const Noa = {
                     var tag = document.createElement("option");
                     tag.value=element;
                     Noa.$datalist.appendChild(tag);
-                    console.log(tag);
                 });
             });
         }
@@ -215,6 +219,14 @@ const Noa = {
                     input.value = response['data']['title']
                     textarea.value = response['data']['desc'];
                     textarea.disabled=false;
+
+                    // Display all title
+                    Noa.$datalist.innerHTML='';
+                    response['titles'].forEach(element => {
+                        var tag = document.createElement("option");
+                        tag.value=element;
+                        Noa.$datalist.appendChild(tag);
+                    });
                 });
             }
         }, Noa.update_time);
