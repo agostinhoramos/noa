@@ -5,7 +5,6 @@
 cert/server.crt
 cert/server.key
 
-.vscode
 ### Node ###
 # Logs
 logs
