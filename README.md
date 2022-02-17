@@ -1,4 +1,7 @@
 # Notepad Online Annotation (NOA)
+
+This project arises from the need to create an online notepad accessible anywhere with internet available. This application is very easy to use and has the capacity to store a lot of information.
+
 ## Requirements
 - MongoDB
 - NodeJS
