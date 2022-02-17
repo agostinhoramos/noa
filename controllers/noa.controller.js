@@ -102,7 +102,7 @@ exports.request_auth = async (req, res) => {
         result = {};
         result.auth = {};
 
-        if( __auth.length > 2 ){
+        if( __auth.length >= process.env.MAX_NUMBER_OF_ATTEMPTS ){
             return res.status(200).json({
                 auth: {
                     status: 'NOK',
@@ -140,7 +140,7 @@ exports.auth = async (req, res) => {
 
         let isCorrect = true;
 
-        if( __auth.length < 3 ){
+        if( __auth.length < process.env.MAX_NUMBER_OF_ATTEMPTS ){
 
             isCorrect = true;
             arr_passwd = __passwd.split("");
@@ -187,7 +187,7 @@ exports.auth = async (req, res) => {
 exports.read = async (req, res) => {
     
     u_access(req, res, async () => {
-        if( __auth.length < 3 ){
+        if( __auth.length < process.env.MAX_NUMBER_OF_ATTEMPTS ){
             if( __auth_key == req.cookies['auth-key'] ){
                 title_list = [];
                 try {
@@ -227,7 +227,7 @@ exports.read = async (req, res) => {
 
 exports.write = async (req, res) => {
     u_access(req, res, async () => {
-        if( __auth.length < 3 ){
+        if( __auth.length < process.env.MAX_NUMBER_OF_ATTEMPTS ){
             if( __auth_key == req.cookies['auth-key'] ){
                 title_list = [];
                 try {

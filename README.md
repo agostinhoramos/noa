@@ -12,6 +12,11 @@ npm run server
 
 ## How to use it?
 
+- [ SHIFT + N ] >> To open login windows
+- [ ESC ] >> To exit login windows OR to disconnect
+- [ ROW-LEFT ] >> Navigate to PREV content
+- [ ROW-RIGHT ] >> Navigate to NEXT content
+
 ### Step 1
 
 ![Alt text](https://github.com/agostinhoramos/noa/blob/master/screenshots/step1.png?raw=true "Steps")
