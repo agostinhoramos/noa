@@ -2,7 +2,7 @@ self.addEventListener("install", e => {
     e.waitUntil(
         caches.open("statics").then(cache => {
             return cache.addAll([
-                "/", "/@/noa", 
+                "/",
                 "/img/noa.png",
                 "/static/main.js",
                 "/vendor/tailwindcss/index.css",

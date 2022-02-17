@@ -71,7 +71,7 @@ const u_access = (req, res, call) => {
 exports.create = async (req, res) => {
     Access.find({ enabled: 1 }, async (err, data) => {
         if( data.length == 0 ){
-            console.log( req.body.passwd );
+            //console.log( req.body.passwd );
             new Access({
                 passwd: req.body.passwd,
                 enabled: 1,

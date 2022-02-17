@@ -81,14 +81,11 @@ let on_open_windows = function(){
         }
     }).done(function (response) {
         if( response['auth']['status'] == 'OK' ){
-            setTimeout(function(){
-                on_open_windows();
-            }, 1000);
             return;
         }
 
         if( response['auth']['status'] == 'NOK' ){
-            on_close_windows();
+            
         }
 
         arr_pos = response['pos'];
@@ -137,6 +134,11 @@ let send_password = function(arr){
     }).done(function (response) {
         if( response['auth']['status'] == 'OK' ){
             location.reload();
+        }
+        if( response['auth']['status'] == 'NOK' ){
+            setTimeout(function(){
+                on_open_windows();
+            }, 1000);
         }
     });
 }
