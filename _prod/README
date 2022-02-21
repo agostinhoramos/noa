@@ -3,6 +3,7 @@ sudo npm install pm2@latest -g
 
 # Set RUN path
 pm2 start app.js --name NOA
+pm2 save --force
 
 # Get permission to restart
 sudo env PATH=$PATH:/usr/bin pm2 startup ubuntu -u webmaster --hp /home/webmaster

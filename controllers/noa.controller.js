@@ -43,27 +43,32 @@ const u_access = (req, res, call) => {
     
     Access.findOne({ enabled: 1 }, async (err, data) => {
 
-        __key = data.auth_key;
-        __name = data.name; 
-        __id = data._id.toString();
-        __passwd = data.passwd;
+        if( data != null ){
+            __key = data.auth_key;
+            __name = data.name; 
+            __id = data._id.toString();
+            __passwd = data.passwd;
 
-       const n_auth = JSON.stringify({
-            id: __id,
-            ak: process.env.AUTH_KEY,
-            fp: identify_client(req),
-            ip: ip_address(req)
-        });
+        const n_auth = JSON.stringify({
+                id: __id,
+                ak: process.env.AUTH_KEY,
+                fp: identify_client(req),
+                ip: ip_address(req)
+            });
 
-        __auth_key = crypto.createHash('sha256')
-                    .update(n_auth).digest('base64');
+            __auth_key = crypto.createHash('sha256')
+                        .update(n_auth).digest('base64');
 
-        collection = db.collection("noas");
+            collection = db.collection("noas");
 
-        Auth.find({ ip_address : ip_address(req), status: 0 }, function(err, auth) {
-            __auth = auth;
-            call();
-        });
+            Auth.find({ ip_address : ip_address(req), status: 0 }, function(err, auth) {
+                __auth = auth;
+                call();
+            });
+        }else{
+            res.clearCookie('auth-key');
+            return res.status(200).json({});
+        }
 
     });
 }
